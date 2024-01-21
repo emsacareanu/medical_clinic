@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+</head>
+<body>
+
+<div id="main-container">
+    <h1>RECEPTIONIST'S PAGE</h1>
+
+    <form id="queryForm">
+        <label for="patient_id">Patient ID:</label>
+        <input type="text" id="patient_id" name="patient_id">
+
+        <label for="cnp">CNP:</label>
+        <input type="text" id="cnp" name="cnp">
+
+        <button type="button" onclick="submitQuery()">Find</button>
+    </form>
+
+    <div id="result-container">
+        <h2>Results:</h2>
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Appointment ID</th>
+                    <th>Patient</th>
+                    <th></th>
+                    <th>CNP</th>
+                    <th>Doctor</th>
+                    <th></th>
+                    <th>Specialization</th>
+                    <th>Room No.</th>
+                </tr>
+            </thead>
+            <tbody id="dataBody"></tbody>
+        </table>
+        <pre id="queryOutput"></pre>
+    </div>
+
+</div>
+
+<script>
+    function submitQuery() {
+        var patientIdValue = encodeURIComponent(document.getElementById('patient_id').value);
+        var cnpValue = encodeURIComponent(document.getElementById('cnp').value);
+
+        if (!patientIdValue && !cnpValue) {
+            var queryOutput = document.getElementById('queryOutput');
+            queryOutput.innerHTML = 'Please fill in at least one field.';
+            return;
+        }
+
+        var xhr = new XMLHttpRequest();
+        var url = '{% url "find_patient" %}?patient_id=' + patientIdValue +
+                  '&cnp=' + cnpValue;
+
+        xhr.open('GET', url, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                var resultContainer = document.getElementById('resultContainer');
+                var errorMessageContainer = document.getElementById('errorMessage');
+                if (xhr.status == 200) {
+                    var responseData = JSON.parse(xhr.responseText);
+                    
+                    var dataBody = document.getElementById('dataBody');
+                    dataBody.innerHTML = '';
+                    if (responseData.data) {
+                        responseData.data.forEach(function(item) {
+                            var row = document.createElement('tr');
+                            row.innerHTML = '<td>' + item.field1 + '</td>' +
+                                                '<td>' + item.field2 + '</td>' +
+                                                '<td>' + item.field3 + '</td>' +
+                                                '<td>' + item.field4 + '</td>' +
+                                                '<td>' + item.field5 + '</td>' +
+                                                '<td>' + item.field6 + '</td>' +
+                                                '<td>' + item.field7 + '</td>' +
+                                                '<td>' + item.field8 + '</td>';
+                            
+                            dataBody.appendChild(row);
+                        });
+                    }
+
+                    var queryOutput = document.getElementById('queryOutput');
+                    queryOutput.innerHTML = responseData.query_output || 'No matching records found.';
+
+                } else {
+                    resultContainer.innerHTML = 'Server error: ' + xhr.status;
+                }
+            }
+        };
+        xhr.send();
+    }
+</script>
+
+</body>
+</html>

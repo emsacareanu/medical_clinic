@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+    <title>Administrator</title>
+</head>
+<body>
+    <div id="employee-container">
+        <h1>ADD CLINIC EMPLOYEES</h1>
+        
+        {% if success_message %}
+            <p class="success-message">{{ success_message }}</p>
+        {% endif %}
+    
+        <form id="employee-form" method="post" action="{% url 'submit_employee_form' %}">
+            {% csrf_token %}
+
+
+            <div class="form-row">
+                <label for="employee_ID">Employee ID:</label>
+                <input type="text" id="employee_ID" name="employee_ID" required>
+                
+                <label for="CNP">CNP:</label>
+                <input type="text" id="CNP" name="CNP" required>
+
+                <label for="DOB">DOB:</label>
+                <input type="text" id="DOB" name="DOB" placeholder="YYYY-MM-DD" required>
+
+                <label for="phone_no">Phone Number:</label>
+                <input type="text" id="phone_no" name="phone_no" required>
+            </div>
+
+
+            <div class="form-row">
+                <label for="e_name">Employee Name:</label>
+                <input type="text" id="e_name" name="e_name" required>
+
+                <label for="e_surname">Employee Surname:</label>
+                <input type="text" id="e_surname" name="e_surname" required>
+
+                <label for="role">Role:</label>
+                <select id="role" name="role" required>
+                    <option value="medic">Medic</option>
+                    <option value="guard">Guard</option>
+                    <option value="nurse">Nurse</option>
+                    <option value="administrator">Administrator</option>
+                    <option value="janitor">Janitor</option>
+                </select>
+
+                <label for="DOE">DOE:</label>
+                <input type="text" id="DOE" name="DOE" placeholder="YYYY-MM-DD" required>
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+
+
+        <form method="post" action="{% url 'show_query_result' %}">
+            {% csrf_token %}
+            <button type="submit">Show Query Result</button>
+        </form>
+
+
+        {% if query_result %}
+            <div id="result-container">
+                <h2>Query Result:</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>CNP</th>
+                            <th>DOB</th>
+                            <th>Phone No.</th>
+                            <th>Name</th>
+                            <th>Surname</th>
+                            <th>Role</th>
+                            <th>DOE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in query_result %}
+                            <tr>
+                                <td>{{ row.employee_ID }}</td>
+                                <td>{{ row.CNP }}</td>
+                                <td>{{ row.DOB|date:"Y-m-d" }}</td>
+                                <td>{{ row.phone_no }}</td>
+                                <td>{{ row.e_name }}</td>
+                                <td>{{ row.e_surname }}</td>
+                                <td>{{ row.role }}</td>
+                                <td>{{ row.DOE|date:"Y-m-d" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

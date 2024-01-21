@@ -1,0 +1,27 @@
+<!-- login.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="login-page">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <div id="login-container">
+        <h1>LOGIN</h1>
+        {% if error_message %}
+            <p class="error-message">{{ error_message }}</p>
+        {% endif %}
+        <form id="login-form" method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <label for="login-username">Username:</label>
+            <input type="text" id="login-username" name="username" required>
+            <label for="login-password">Password:</label>
+            <input type="password" id="login-password" name="password" required>
+            <button id="login-button" type="submit">Login</button>
+        </form>
+    </div>
+</body>
+</html>
